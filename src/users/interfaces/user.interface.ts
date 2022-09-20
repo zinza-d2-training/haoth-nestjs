@@ -1,5 +1,16 @@
-export interface User {
+export interface IUser {
+  id: number;
   name: string;
-  age: number;
-  job: string;
+  email: string;
+  password: string;
+  identify_card: string;
+  birthday: string;
+  gender: string;
+  province: string;
+  district: string;
+  ward: string;
+  created_at: string;
+  updated_at: string;
 }
+
+export type IUserResponse = Partial<IUser>;

@@ -32,6 +32,9 @@ export class User {
   @Column()
   ward: string;
 
+  @Column({ default: false })
+  isAdmin: boolean;
+
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
