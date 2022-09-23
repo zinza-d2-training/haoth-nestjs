@@ -8,7 +8,7 @@ import {
 @ValidatorConstraint({ async: true })
 export class StringNumber implements ValidatorConstraintInterface {
   validate(value: string) {
-    const reg = new RegExp('^[0-9]$');
+    const reg = new RegExp(/^[0-9]+$/);
     return reg.test(value);
   }
 }
