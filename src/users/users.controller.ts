@@ -6,23 +6,25 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Get('/api/all')
+  @Get()
   async findAll() {
     return await this.usersService.findAll();
   }
 
-  @Get('api/find/:id')
+  @Get('/:id')
   async findOne(
     @Param(
       'id',
@@ -33,25 +35,26 @@ export class UsersController {
     return await this.usersService.findOne(id);
   }
 
-  @Post('/api')
+  @Post()
   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
 
-  @Post('/api/update/:id')
+  @Patch('/:id')
+  @UsePipes(new ValidationPipe())
   async update(
     @Param(
       'id',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: number,
-    @Body() updateUserDto: Partial<CreateUserDto>,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
     return await this.usersService.update(id, updateUserDto);
   }
 
-  @Delete('/api/delete/:id')
+  @Delete('/:id')
   async delete(
     @Param(
       'id',

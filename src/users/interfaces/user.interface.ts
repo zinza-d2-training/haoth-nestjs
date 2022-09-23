@@ -9,6 +9,7 @@ export interface IUser {
   province: string;
   district: string;
   ward: string;
+  isAdmin: boolean;
   created_at: string;
   updated_at: string;
 }

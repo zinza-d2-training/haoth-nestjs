@@ -1,51 +1,55 @@
-import { Entity, Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id', type: 'int' })
   id: number;
 
-  @Column()
+  @Column({ name: 'name', type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ unique: true })
+  @Column({ name: 'email', unique: true, type: 'varchar', length: 255 })
   email: string;
 
-  @Column()
+  @Column({ name: 'password', type: 'varchar', length: 255 })
   password: string;
 
-  @Column({ unique: true })
-  identify_card: string;
+  @Column({ name: 'identify_card', type: 'varchar', unique: true, length: 12 })
+  identifyCard: string;
 
-  @Column()
+  @Column({ name: 'birthday', type: 'varchar', length: 50 })
   birthday: string;
 
-  @Column()
+  @Column({ name: 'gender', type: 'varchar', length: 10 })
   gender: string;
 
-  @Column()
+  @Column({ name: 'province', type: 'varchar', length: 255 })
   province: string;
 
-  @Column()
+  @Column({ name: 'district', type: 'varchar', length: 255 })
   district: string;
 
-  @Column()
+  @Column({ name: 'ward', type: 'varchar', length: 255 })
   ward: string;
 
-  @Column({ default: false })
+  @Column({ name: 'is_admin', type: 'boolean', default: false })
   isAdmin: boolean;
 
   @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    name: 'token_reset_password',
+    type: 'text',
     nullable: true,
   })
-  created_at: Timestamp;
+  tokenResetPassword: string;
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
-  })
-  updated_at: Timestamp;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
+  createdAt: Date;
+
+  @CreateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true })
+  updatedAt: Date;
 }

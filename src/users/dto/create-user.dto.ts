@@ -1,5 +1,6 @@
-import { IsDefined, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsDefined, IsEmail, MinLength } from 'class-validator';
 import { IsLength } from './length.dto';
+import { IsNumberString } from './string-number.dto';
 
 export class CreateUserDto {
   @IsDefined()
@@ -11,24 +12,25 @@ export class CreateUserDto {
 
   @IsDefined()
   @IsLength({ message: 'Identify card must equal 9 or 12 number' })
-  identify_card: string;
+  @IsNumberString({ message: 'Identify card must is number' })
+  identifyCard: string;
 
   @IsDefined()
   @MinLength(8)
   password: string;
 
-  @IsNotEmpty()
+  @IsDefined()
   birthday: string;
 
-  @IsNotEmpty()
+  @IsDefined()
   gender: string;
 
-  @IsNotEmpty()
+  @IsDefined()
   province: string;
 
-  @IsNotEmpty()
+  @IsDefined()
   district: string;
 
-  @IsNotEmpty()
+  @IsDefined()
   ward: string;
 }

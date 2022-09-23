@@ -5,6 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from 'src/typeorm/entities/user.entity';
 import { IUserResponse } from './interfaces/user.interface';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UsersService {
   private readonly users: IUserResponse[] = [];
@@ -24,18 +25,32 @@ export class UsersService {
         password: hashPassword,
       };
       const newUser = await this.userRepository.save(user);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, isAdmin, ...others } = newUser;
-      const result = { status: 200, data: others, msg: 'Success' };
+      const { password, isAdmin, tokenResetPassword, ...others } = newUser;
+      const data = { password, isAdmin, tokenResetPassword, response: others };
+      const result = { status: 200, data: data.response, msg: 'Success' };
       return result;
     } catch (error) {
       throw new HttpException(error, 500);
     }
   }
 
-  async update(id: number, updateUserDto: Partial<CreateUserDto>) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      await this.userRepository.update({ id }, updateUserDto);
+      const oldPwd = updateUserDto.password;
+      if (!!oldPwd) {
+        const saltRounds = 10;
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hashPassword = bcrypt.hashSync(oldPwd, salt);
+        await this.userRepository.update(
+          { id },
+          {
+            ...updateUserDto,
+            password: hashPassword,
+          },
+        );
+      } else {
+        await this.userRepository.update({ id }, updateUserDto);
+      }
       const user = this.findOne(id);
       return user;
     } catch (error) {
@@ -63,9 +78,9 @@ export class UsersService {
       where: { id },
     });
     if (!!user) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, isAdmin, ...others } = user;
-      const result = { status: 200, data: others, msg: 'success' };
+      const { password, isAdmin, tokenResetPassword, ...others } = user;
+      const data = { password, isAdmin, tokenResetPassword, response: others };
+      const result = { status: 200, data: data.response, msg: 'success' };
       return result;
     } else {
       const result = { status: 404, data: {}, msg: 'Not found user' };
@@ -76,9 +91,9 @@ export class UsersService {
   async findAll() {
     const listUsers = await this.userRepository.find();
     const result = listUsers.map((user: User) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, isAdmin, ...others } = user;
-      return others;
+      const { password, isAdmin, tokenResetPassword, ...others } = user;
+      const data = { password, isAdmin, tokenResetPassword, response: others };
+      return data.response;
     });
     return { status: 200, data: result, msg: 'success' };
   }
