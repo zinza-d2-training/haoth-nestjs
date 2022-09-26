@@ -20,17 +20,11 @@ export class CreateUserDto {
   password: string;
 
   @IsDefined()
-  birthday: string;
+  birthday: Date;
 
   @IsDefined()
-  gender: string;
+  gender: number;
 
   @IsDefined()
-  province: string;
-
-  @IsDefined()
-  district: string;
-
-  @IsDefined()
-  ward: string;
+  wardId: number;
 }

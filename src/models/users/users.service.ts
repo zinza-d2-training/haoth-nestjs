@@ -25,8 +25,8 @@ export class UsersService {
         password: hashPassword,
       };
       const newUser = await this.userRepository.save(user);
-      const { password, isAdmin, tokenResetPassword, ...others } = newUser;
-      const data = { password, isAdmin, tokenResetPassword, response: others };
+      const { password, type, tokenResetPassword, ...others } = newUser;
+      const data = { password, type, tokenResetPassword, response: others };
       const result = { status: 200, data: data.response, msg: 'Success' };
       return result;
     } catch (error) {
@@ -78,8 +78,8 @@ export class UsersService {
       where: { id },
     });
     if (!!user) {
-      const { password, isAdmin, tokenResetPassword, ...others } = user;
-      const data = { password, isAdmin, tokenResetPassword, response: others };
+      const { password, type, tokenResetPassword, ...others } = user;
+      const data = { password, type, tokenResetPassword, response: others };
       const result = { status: 200, data: data.response, msg: 'success' };
       return result;
     } else {
@@ -91,8 +91,8 @@ export class UsersService {
   async findAll() {
     const listUsers = await this.userRepository.find();
     const result = listUsers.map((user: User) => {
-      const { password, isAdmin, tokenResetPassword, ...others } = user;
-      const data = { password, isAdmin, tokenResetPassword, response: others };
+      const { password, type, tokenResetPassword, ...others } = user;
+      const data = { password, type, tokenResetPassword, response: others };
       return data.response;
     });
     return { status: 200, data: result, msg: 'success' };

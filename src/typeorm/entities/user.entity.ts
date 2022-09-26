@@ -22,23 +22,17 @@ export class User {
   @Column({ name: 'identify_card', type: 'varchar', unique: true, length: 12 })
   identifyCard: string;
 
-  @Column({ name: 'birthday', type: 'varchar', length: 50 })
-  birthday: string;
+  @Column({ name: 'birthday', type: 'date' })
+  birthday: Date;
 
-  @Column({ name: 'gender', type: 'varchar', length: 10 })
-  gender: string;
+  @Column({ name: 'gender', type: 'tinyint' })
+  gender: number;
 
-  @Column({ name: 'province', type: 'varchar', length: 255 })
-  province: string;
+  @Column({ name: 'ward_id', type: 'int' })
+  wardId: number;
 
-  @Column({ name: 'district', type: 'varchar', length: 255 })
-  district: string;
-
-  @Column({ name: 'ward', type: 'varchar', length: 255 })
-  ward: string;
-
-  @Column({ name: 'is_admin', type: 'boolean', default: false })
-  isAdmin: boolean;
+  @Column({ name: 'type', type: 'int', default: 0 })
+  type: number;
 
   @Column({
     name: 'token_reset_password',
