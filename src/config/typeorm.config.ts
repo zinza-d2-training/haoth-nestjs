@@ -39,7 +39,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   migrations: [__dirname + '/../migrations/**/*{.ts,.js}'],
   entities: [__dirname + '/../typeorm/entities/**/*{.ts,.js}'],
   cli: {
-    migrationsDir: __dirname + '../migrations',
+    migrationsDir: __dirname + '/../migrations',
   },
   extra: {
     charset: 'utf8mb4_unicode_ci',

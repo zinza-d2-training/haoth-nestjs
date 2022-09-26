@@ -37,33 +37,21 @@ export class User1663820263532 implements MigrationInterface {
           },
           {
             name: 'birthday',
-            type: 'varchar',
-            length: '50',
+            type: 'date',
           },
           {
             name: 'gender',
-            type: 'varchar',
-            length: '10',
+            type: 'tinyInt',
+            default: 0, // 0: Nam // 1: Nu, 2:other
           },
           {
-            name: 'province',
-            type: 'varchar',
-            length: '255',
+            name: 'ward_id',
+            type: 'int',
           },
           {
-            name: 'district',
-            type: 'varchar',
-            length: '255',
-          },
-          {
-            name: 'ward',
-            type: 'varchar',
-            length: '255',
-          },
-          {
-            name: 'is_admin',
-            type: 'boolean',
-            default: false,
+            name: 'type',
+            type: 'int',
+            default: 0, // 0: user, 1:admin
           },
           {
             name: 'token_reset_password',
