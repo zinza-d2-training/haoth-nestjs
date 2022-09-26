@@ -59,10 +59,12 @@ export class AdministrativeUnitService {
       const district = districtsDb.find((dis) => {
         return dis.name === item['Quận Huyện'];
       });
-      wards.push({
-        name: item['Phường Xã'] || 'Undefined data',
-        districtId: district.id,
-      });
+      if (!!district) {
+        wards.push({
+          name: item['Phường Xã'] || 'Undefined data',
+          districtId: district.id,
+        });
+      }
     });
     await this.wardRepository.insert(wards);
     _cli.info('Import data success');
