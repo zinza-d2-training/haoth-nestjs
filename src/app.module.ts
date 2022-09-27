@@ -1,3 +1,4 @@
+import { AuthModule } from './models/auth/auth.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConsoleModule } from '@squareboat/nest-console';
@@ -15,6 +16,7 @@ import { AdministrativeUnitModule } from './models/administrative_units/administ
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     UsersModule,
     AdministrativeUnitModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

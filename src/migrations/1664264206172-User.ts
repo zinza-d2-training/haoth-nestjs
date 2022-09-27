@@ -1,6 +1,11 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
-export class User1663820263532 implements MigrationInterface {
+export class User1664264206172 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -71,6 +76,17 @@ export class User1663820263532 implements MigrationInterface {
             default: 'CURRENT_TIMESTAMP',
           },
         ],
+      }),
+      true,
+    );
+    await queryRunner.createForeignKey(
+      'users',
+      new TableForeignKey({
+        columnNames: ['ward_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'wards',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       }),
     );
   }

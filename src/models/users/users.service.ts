@@ -1,7 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from 'src/typeorm/entities/user.entity';
 import { IUserResponse } from './interfaces/user.interface';
 import * as bcrypt from 'bcryptjs';
@@ -13,26 +12,6 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
-
-  async create(user: CreateUserDto) {
-    try {
-      const pwd = user.password;
-      const saltRounds = 10;
-      const salt = bcrypt.genSaltSync(saltRounds);
-      const hashPassword = bcrypt.hashSync(pwd, salt);
-      user = {
-        ...user,
-        password: hashPassword,
-      };
-      const newUser = await this.userRepository.save(user);
-      const { password, type, tokenResetPassword, ...others } = newUser;
-      const data = { password, type, tokenResetPassword, response: others };
-      const result = { status: 200, data: data.response, msg: 'Success' };
-      return result;
-    } catch (error) {
-      throw new HttpException(error, 500);
-    }
-  }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
@@ -74,9 +53,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
+    const user = await this.userRepository.findOne({ id });
     if (!!user) {
       const { password, type, tokenResetPassword, ...others } = user;
       const data = { password, type, tokenResetPassword, response: others };
@@ -85,6 +62,17 @@ export class UsersService {
     } else {
       const result = { status: 404, data: {}, msg: 'Not found user' };
       return result;
+    }
+  }
+
+  async findByEmail(username: string) {
+    const user = await this.userRepository.findOne({
+      where: { email: username },
+    });
+    if (!!user) {
+      return user;
+    } else {
+      return null;
     }
   }
 

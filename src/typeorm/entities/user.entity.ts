@@ -3,7 +3,10 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Ward } from './ward.entity';
 
 @Entity('users')
 export class User {
@@ -46,4 +49,8 @@ export class User {
 
   @CreateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true })
   updatedAt: Date;
+
+  @ManyToOne(() => Ward, (ward) => ward.users)
+  @JoinColumn({ name: 'ward_id' })
+  ward: Ward;
 }
