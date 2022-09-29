@@ -4,10 +4,11 @@ export interface IUser {
   password: string;
   email: string;
   name: string;
-  birthday: string;
+  birthday: Date;
   wardId: number;
   gender: number;
   type: number;
+  tokenResetPassword: string;
   createdAt: Date;
   updatedAt: Date;
 }

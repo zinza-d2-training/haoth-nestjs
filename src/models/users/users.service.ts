@@ -2,9 +2,10 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/typeorm/entities/user.entity';
-import { IUserResponse } from './interfaces/user.interface';
+import { IUser, IUserResponse } from './interfaces/user.interface';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { IArrayResponse, IResponse } from './interfaces/response.interface';
 @Injectable()
 export class UsersService {
   private readonly users: IUserResponse[] = [];
@@ -13,7 +14,7 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<IResponse> {
     try {
       const oldPwd = updateUserDto.password;
       if (!!oldPwd) {
@@ -52,7 +53,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<IResponse> {
     const user = await this.userRepository.findOne({ id });
     if (!!user) {
       const { password, type, tokenResetPassword, ...others } = user;
@@ -65,7 +66,7 @@ export class UsersService {
     }
   }
 
-  async findByEmail(username: string) {
+  async findByEmail(username: string): Promise<IUser> {
     const user = await this.userRepository.findOne({
       where: { email: username },
     });
@@ -76,7 +77,7 @@ export class UsersService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<IArrayResponse> {
     const listUsers = await this.userRepository.find();
     const result = listUsers.map((user: User) => {
       const { password, type, tokenResetPassword, ...others } = user;

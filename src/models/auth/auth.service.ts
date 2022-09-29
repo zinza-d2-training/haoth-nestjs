@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interfaces/user.interface';
+import { IResponse } from './interfaces/response.interface';
 
 @Injectable()
 export class AuthService {
@@ -17,8 +18,11 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string) {
-    const user: User = await this.usersService.findByEmail(email);
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<Partial<IUser> | null> {
+    const user = await this.usersService.findByEmail(email);
     if (user) {
       const isMatched: boolean = await bcrypt.compare(password, user.password);
       if (isMatched) {
@@ -36,7 +40,7 @@ export class AuthService {
     return { user: user, token: this.jwtService.sign(payload) };
   }
 
-  async register(user: CreateUserDto) {
+  async register(user: CreateUserDto): Promise<IResponse | undefined> {
     try {
       const identifyCard = user.identifyCard;
       const email = user.email;
@@ -49,14 +53,18 @@ export class AuthService {
         const saltRounds = 10;
         const salt = bcrypt.genSaltSync(saltRounds);
         const hashPassword = bcrypt.hashSync(pwd, salt);
-        user = {
+        const saveUser = {
           ...user,
           password: hashPassword,
         };
-        const newUser = await this.userRepository.save(user);
+        const newUser = await this.userRepository.save(saveUser);
         const { password, type, tokenResetPassword, ...others } = newUser;
         const data = { password, type, tokenResetPassword, response: others };
-        const result = { status: 200, data: data.response, msg: 'Success' };
+        const result = {
+          status: 200,
+          data: data.response,
+          msg: 'Success',
+        };
         return result;
       } else {
         if (!!exitsEmail) {

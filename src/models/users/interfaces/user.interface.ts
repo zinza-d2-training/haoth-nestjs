@@ -3,15 +3,14 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  identify_card: string;
-  birthday: string;
-  gender: string;
-  province: string;
-  district: string;
-  ward: string;
-  isAdmin: boolean;
-  created_at: string;
-  updated_at: string;
+  identifyCard: string;
+  birthday: Date;
+  gender: number;
+  wardId: number;
+  type: number;
+  tokenResetPassword: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type IUserResponse = Partial<IUser>;
