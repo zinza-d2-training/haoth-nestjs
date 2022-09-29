@@ -61,7 +61,7 @@ export class AdministrativeUnitService {
       });
       if (!!district) {
         wards.push({
-          name: item['Phường Xã'],
+          name: item['Phường Xã'] || 'No name',
           districtId: district.id,
         });
       }

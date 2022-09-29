@@ -7,11 +7,11 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -24,6 +24,7 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async findOne(
     @Param(
@@ -35,12 +36,7 @@ export class UsersController {
     return await this.usersService.findOne(id);
   }
 
-  @Post()
-  @UsePipes(new ValidationPipe())
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   @UsePipes(new ValidationPipe())
   async update(

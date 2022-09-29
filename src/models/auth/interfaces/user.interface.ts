@@ -1,16 +1,14 @@
 export interface IUser {
   id: number;
-  name: string;
-  email: string;
+  indentifyCard: string;
   password: string;
-  identifyCard: string;
+  email: string;
+  name: string;
   birthday: Date;
-  gender: number;
   wardId: number;
+  gender: number;
   type: number;
   tokenResetPassword: string;
   createdAt: Date;
   updatedAt: Date;
 }
-
-export type IUserResponse = Partial<IUser>;

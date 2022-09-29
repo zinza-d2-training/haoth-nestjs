@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { District } from './district.entity';
+import { User } from './user.entity';
 
 @Entity('wards')
 export class Ward {
@@ -28,4 +30,7 @@ export class Ward {
 
   @CreateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true })
   updatedAt: Date;
+
+  @OneToMany(() => User, (user) => user.ward)
+  users: User[];
 }
