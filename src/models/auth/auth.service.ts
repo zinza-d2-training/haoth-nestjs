@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interfaces/user.interface';
 import { IResponse } from './interfaces/response.interface';
+import { ILoginResponse } from './interfaces/login_response.interface';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
     }
   }
 
-  async login(user: Partial<IUser>) {
+  async login(user: Partial<IUser>): Promise<ILoginResponse> {
     const payload = { email: user.email, id: user.id, type: user.type };
     return { user: user, token: this.jwtService.sign(payload) };
   }
