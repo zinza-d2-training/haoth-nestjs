@@ -16,7 +16,7 @@ export class AreaController {
     return await this.areaService.findAllProvince();
   }
 
-  @Get('provinces/p/:id')
+  @Get('provinces/:id')
   async findDistricts(
     @Param(
       'id',
@@ -27,7 +27,7 @@ export class AreaController {
     return await this.areaService.findDistricts(id);
   }
 
-  @Get('provinces/d/:id')
+  @Get('districts/:id')
   async findWards(
     @Param(
       'id',
