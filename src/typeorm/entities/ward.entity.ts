@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { District } from './district.entity';
+import { Site } from './site.entity';
 import { User } from './user.entity';
 
 @Entity('wards')
@@ -21,16 +22,19 @@ export class Ward {
   @Column({ name: 'name', type: 'varchar', length: 255 })
   name: string;
 
-  @ManyToOne(() => District, (district) => district.wards)
-  @JoinColumn({ name: 'district_id' })
-  district?: District;
-
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;
 
   @CreateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true })
   updatedAt: Date;
 
+  @ManyToOne(() => District, (district) => district.wards)
+  @JoinColumn({ name: 'district_id' })
+  district?: District;
+
   @OneToMany(() => User, (user) => user.ward)
   users: User[];
+
+  @OneToMany(() => Site, (site) => site.ward)
+  sites: Site[];
 }

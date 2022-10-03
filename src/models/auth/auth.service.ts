@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interfaces/user.interface';
-import { IResponse } from './interfaces/response.interface';
 import { ILoginResponse } from './interfaces/login_response.interface';
 
 @Injectable()
@@ -41,7 +40,7 @@ export class AuthService {
     return { user: user, token: this.jwtService.sign(payload) };
   }
 
-  async register(user: CreateUserDto): Promise<IResponse | undefined> {
+  async register(user: CreateUserDto): Promise<Partial<IUser> | undefined> {
     try {
       const identifyCard = user.identifyCard;
       const email = user.email;
@@ -61,11 +60,7 @@ export class AuthService {
         const newUser = await this.userRepository.save(saveUser);
         const { password, type, tokenResetPassword, ...others } = newUser;
         const data = { password, type, tokenResetPassword, response: others };
-        const result = {
-          status: 200,
-          data: data.response,
-          msg: 'Success',
-        };
+        const result = data.response;
         return result;
       } else {
         if (!!exitsEmail) {
