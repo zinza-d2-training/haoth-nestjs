@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { AdministrativeUnitModule } from './models/administrative_units/administrativeunit.module';
 import { AreaModule } from './models/areas/area.module';
+import { ForgotPasswordModule } from './models/forgot_password/forgot_password.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AreaModule } from './models/areas/area.module';
     AdministrativeUnitModule,
     AuthModule,
     AreaModule,
+    ForgotPasswordModule,
   ],
   controllers: [AppController],
   providers: [AppService],
