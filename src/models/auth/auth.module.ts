@@ -9,6 +9,7 @@ import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/typeorm/entities/user.entity';
+import { RolesGuard } from './guards/role.guard';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { User } from 'src/typeorm/entities/user.entity';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, RolesGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

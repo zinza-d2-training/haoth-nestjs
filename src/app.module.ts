@@ -10,6 +10,7 @@ import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { AdministrativeUnitModule } from './models/administrative_units/administrativeunit.module';
 import { AreaModule } from './models/areas/area.module';
 import { ForgotPasswordModule } from './models/forgot_password/forgot_password.module';
+import { SiteModule } from './models/sites/site.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ForgotPasswordModule } from './models/forgot_password/forgot_password.m
     AuthModule,
     AreaModule,
     ForgotPasswordModule,
+    SiteModule,
   ],
   controllers: [AppController],
   providers: [AppService],
