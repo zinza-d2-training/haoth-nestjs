@@ -18,7 +18,7 @@ export class ForgotPasswordService {
 
   async sendConfirm(emailDto: UserEmailDto): Promise<{ message: string }> {
     const user = await this.userRespostory.findOne({ email: emailDto.email });
-    if (!!user) {
+    if (user) {
       const { id, email, type } = user;
       const payload = { id, email, type };
       const tokenReset = this.jwtService.sign(payload);
@@ -40,12 +40,12 @@ export class ForgotPasswordService {
     try {
       const newPassword = Math.random().toString(36).slice(-8);
       const payload = this.jwtService.verify(token);
-      if (!!payload) {
+      if (payload) {
         const hassPass = hassPassword(newPassword);
         const user = await this.userRespostory.findOne({
           where: { tokenResetPassword: token },
         });
-        if (!!user) {
+        if (user) {
           if (user.email === payload.email) {
             await this.userRespostory.update(user, {
               ...user,
