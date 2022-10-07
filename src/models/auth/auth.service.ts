@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interfaces/user.interface';
 import { ILoginResponse } from './interfaces/login_response.interface';
+import { IPayloadToken } from './interfaces/payload_token.interface';
 
 @Injectable()
 export class AuthService {
@@ -79,5 +80,25 @@ export class AuthService {
       status: 200,
       msg: 'Logout success',
     };
+  }
+  // { user: IResponse; isAdmin: boolean }
+  async findUserLogin(
+    token?: string,
+  ): Promise<{ user: Partial<IUser>; isAdmin: boolean }> {
+    try {
+      if (token) {
+        const payload: IPayloadToken = await this.jwtService.verify(token);
+        if (payload) {
+          const user = await this.usersService.findOne(payload.id);
+          if (user) {
+            return { user: user, isAdmin: payload.type === 1 };
+          }
+        }
+      } else {
+        throw new HttpException('Token in valid', 500);
+      }
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 }

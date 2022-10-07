@@ -5,7 +5,6 @@ import { User } from 'src/typeorm/entities/user.entity';
 import { IUser, IUserResponse } from './interfaces/user.interface';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IArrayResponse, IResponse } from './interfaces/response.interface';
 @Injectable()
 export class UsersService {
   private readonly users: IUserResponse[] = [];
@@ -14,7 +13,10 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<IResponse> {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Partial<IUser>> {
     try {
       const oldPwd = updateUserDto.password;
       if (!!oldPwd) {
@@ -53,16 +55,18 @@ export class UsersService {
     }
   }
 
-  async findOne(id: number): Promise<IResponse> {
-    const user = await this.userRepository.findOne({ id });
-    if (!!user) {
-      const { password, type, tokenResetPassword, ...others } = user;
-      const data = { password, type, tokenResetPassword, response: others };
-      const result = { status: 200, data: data.response, msg: 'success' };
-      return result;
-    } else {
-      const result = { status: 404, data: {}, msg: 'Not found user' };
-      return result;
+  async findOne(id: number): Promise<Partial<IUser>> {
+    try {
+      const user = await this.userRepository.findOne({ id });
+      if (user) {
+        const { password, type, tokenResetPassword, ...others } = user;
+        const data = { password, type, tokenResetPassword, response: others };
+        const result = data.response;
+        return result;
+      }
+      throw new HttpException('Not found user', 500);
+    } catch (error) {
+      throw new HttpException(error.message, 500);
     }
   }
 
@@ -77,13 +81,13 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<IArrayResponse> {
+  async findAll(): Promise<Partial<IUser>[]> {
     const listUsers = await this.userRepository.find();
     const result = listUsers.map((user: User) => {
       const { password, type, tokenResetPassword, ...others } = user;
       const data = { password, type, tokenResetPassword, response: others };
       return data.response;
     });
-    return { status: 200, data: result, msg: 'success' };
+    return result;
   }
 }

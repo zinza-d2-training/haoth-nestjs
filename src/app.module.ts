@@ -13,6 +13,7 @@ import { ForgotPasswordModule } from './models/forgot_password/forgot_password.m
 import { SiteModule } from './models/sites/site.module';
 import { VaccineModule } from './models/vaccines/vaccine.module';
 import { GroupModule } from './models/groups/group.module';
+import { VaccineRegistrationModule } from './models/vaccine_registrations/vaccine_registration.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { GroupModule } from './models/groups/group.module';
     SiteModule,
     VaccineModule,
     GroupModule,
+    VaccineRegistrationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

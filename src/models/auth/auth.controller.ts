@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -16,6 +17,11 @@ import { User } from './decorators/user.decorator';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('/')
+  async findUserLogin(@Query() { token }: { token: string }) {
+    return await this.authService.findUserLogin(token);
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
