@@ -57,7 +57,10 @@ export class UsersService {
 
   async findOne(id: number): Promise<Partial<IUser>> {
     try {
-      const user = await this.userRepository.findOne({ id });
+      const user = await this.userRepository.findOne({
+        where: { id },
+        relations: ['ward', 'ward.district', 'ward.district.province'],
+      });
       if (user) {
         const { password, type, tokenResetPassword, ...others } = user;
         const data = { password, type, tokenResetPassword, response: others };

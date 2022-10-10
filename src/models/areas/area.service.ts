@@ -41,7 +41,7 @@ export class AreaService {
     }
   }
 
-  async findWards(id: number): Promise<IWard[] | undefined> {
+  async findWards(id: number): Promise<IWard[]> {
     try {
       const wards = await this.wardRepository.find({
         where: { districtId: id },

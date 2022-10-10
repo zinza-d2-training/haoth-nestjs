@@ -7,7 +7,10 @@ import { CreateRegistrationDto } from './dto/create_registration.dto';
 import { QueryDto } from './dto/query.dto';
 import { UpdateRegistrationDto } from './dto/update_registration.dto';
 import { IPayloadToken } from './interfaces/payload_token.interface';
-import { IVaccineRegistration } from './interfaces/vaccine_registration.interface';
+import {
+  IVaccineRegistration,
+  IVaccineRegistrationResponse,
+} from './interfaces/vaccine_registration.interface';
 
 @Injectable()
 export class VaccineRegistrationService {
@@ -17,11 +20,22 @@ export class VaccineRegistrationService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async findAll(): Promise<IVaccineRegistration[]> {
+  async findAll(): Promise<IVaccineRegistrationResponse[]> {
     try {
-      const res = await this.vaccineResgistrationRepositoy.find();
+      const STATUS = 1;
+      const res: IVaccineRegistrationResponse[] =
+        await this.vaccineResgistrationRepositoy.find({
+          where: { status: STATUS },
+          relations: ['user'],
+        });
       if (res) {
-        return res;
+        const result = res.map((item) => {
+          const { password, type, tokenResetPassword, ...rest } = item.user;
+          const data = { password, type, tokenResetPassword, response: rest };
+          item = { ...item, user: data.response };
+          return item;
+        });
+        return result;
       }
       throw new HttpException('Not found data', 500);
     } catch (error) {
@@ -114,6 +128,10 @@ export class VaccineRegistrationService {
               relations: ['site', 'vaccine'],
             });
           }
+          return await this.vaccineResgistrationRepositoy.find({
+            where: { userId: payload.id },
+            relations: ['site', 'vaccine'],
+          });
         } else {
           throw new HttpException('Token not valid', 500);
         }

@@ -38,7 +38,7 @@ export class AuthService {
 
   async login(user: Partial<IUser>): Promise<ILoginResponse> {
     const payload = { email: user.email, id: user.id, type: user.type };
-    return { user: user, token: this.jwtService.sign(payload) };
+    return { token: this.jwtService.sign(payload) };
   }
 
   async register(user: CreateUserDto): Promise<Partial<IUser> | undefined> {
