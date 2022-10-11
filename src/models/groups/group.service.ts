@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Group } from 'src/typeorm/entities/group.entity';
 import { Repository } from 'typeorm';
@@ -18,9 +18,9 @@ export class GroupService {
       if (groups) {
         return groups;
       }
-      throw new HttpException('Not found group', 404);
+      throw new HttpException('Not found group', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -30,9 +30,9 @@ export class GroupService {
       if (group) {
         return group;
       }
-      throw new HttpException('Not found group', 404);
+      throw new HttpException('Not found group', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -40,7 +40,7 @@ export class GroupService {
     try {
       return await this.groupRepository.save(groupDto);
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -50,7 +50,7 @@ export class GroupService {
       const group = await this.groupRepository.findOne({ id });
       return group;
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -59,7 +59,7 @@ export class GroupService {
       await this.groupRepository.delete({ id });
       return { message: 'Success' };
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -65,13 +65,19 @@ export class AuthService {
         return result;
       } else {
         if (!!exitsEmail) {
-          throw new HttpException('Email da duoc dang ky', 442);
+          throw new HttpException(
+            'Email da duoc dang ky',
+            HttpStatus.NOT_ACCEPTABLE,
+          );
         } else {
-          throw new HttpException('So CMND da duoc dang ky', 442);
+          throw new HttpException(
+            'So CMND da duoc dang ky',
+            HttpStatus.NOT_ACCEPTABLE,
+          );
         }
       }
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -83,7 +89,7 @@ export class AuthService {
   }
   // { user: IResponse; isAdmin: boolean }
   async findUserLogin(
-    token?: string,
+    token: string,
   ): Promise<{ user: Partial<IUser>; isAdmin: boolean }> {
     try {
       if (token) {
@@ -95,10 +101,10 @@ export class AuthService {
           }
         }
       } else {
-        throw new HttpException('Token in valid', 500);
+        throw new HttpException('Token in valid', HttpStatus.NOT_ACCEPTABLE);
       }
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

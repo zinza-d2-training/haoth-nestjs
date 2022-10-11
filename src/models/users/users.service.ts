@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/typeorm/entities/user.entity';
@@ -44,14 +44,12 @@ export class UsersService {
     try {
       const del = await this.userRepository.delete({ id });
       if (del.affected === 1) {
-        const res = { status: 200, msg: 'Success' };
-        return res;
-      } else {
-        const res = { status: 404, msg: 'Failed' };
+        const res = { msg: 'Success' };
         return res;
       }
+      throw new HttpException('Cannot delete', HttpStatus.NOT_ACCEPTABLE);
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -67,9 +65,9 @@ export class UsersService {
         const result = data.response;
         return result;
       }
-      throw new HttpException('Not found user', 500);
+      throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -85,12 +83,19 @@ export class UsersService {
   }
 
   async findAll(): Promise<Partial<IUser>[]> {
-    const listUsers = await this.userRepository.find();
-    const result = listUsers.map((user: User) => {
-      const { password, type, tokenResetPassword, ...others } = user;
-      const data = { password, type, tokenResetPassword, response: others };
-      return data.response;
-    });
-    return result;
+    try {
+      const listUsers = await this.userRepository.find();
+      if (listUsers) {
+        const result = listUsers.map((user: User) => {
+          const { password, type, tokenResetPassword, ...others } = user;
+          const data = { password, type, tokenResetPassword, response: others };
+          return data.response;
+        });
+        return result;
+      }
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Vaccine } from 'src/typeorm/entities/vaccine.entity';
 import { Repository } from 'typeorm';
@@ -18,9 +18,9 @@ export class VaccineService {
       if (vaccines) {
         return vaccines;
       }
-      throw new HttpException('Vaccine not found', 404);
+      throw new HttpException('Vaccine not found', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException('SERVER NOT RUNING', 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -30,9 +30,9 @@ export class VaccineService {
       if (vaccine) {
         return vaccine;
       }
-      throw new HttpException('Vaccine not found', 404);
+      throw new HttpException('Vaccine not found', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException('SERVER NOT RUNING', 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -43,7 +43,7 @@ export class VaccineService {
       if (!exitsVC) {
         return await this.vaccineRepository.save(vaccineCreateDto);
       } else {
-        throw new HttpException('Vaccine Exits', 404);
+        throw new HttpException('Vaccine Exits', HttpStatus.NOT_ACCEPTABLE);
       }
     } catch (error) {
       throw new HttpException(error.message, 500);
@@ -55,7 +55,7 @@ export class VaccineService {
       await this.vaccineRepository.update({ id }, vaccineUpdateDto);
       return await this.vaccineRepository.findOne(id);
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -64,7 +64,7 @@ export class VaccineService {
       await this.vaccineRepository.delete({ id });
       return { message: 'Success' };
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

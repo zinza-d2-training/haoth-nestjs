@@ -18,7 +18,7 @@ import { User } from './decorators/user.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('/')
+  @Get('/user')
   async findUserLogin(@Query() { token }: { token: string }) {
     return await this.authService.findUserLogin(token);
   }

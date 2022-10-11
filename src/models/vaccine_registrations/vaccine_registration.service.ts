@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VaccineRegistration } from 'src/typeorm/entities/vaccine_registration.entity';
@@ -11,6 +11,7 @@ import {
   IVaccineRegistration,
   IVaccineRegistrationResponse,
 } from './interfaces/vaccine_registration.interface';
+import { Status } from './status.enum';
 
 @Injectable()
 export class VaccineRegistrationService {
@@ -22,10 +23,9 @@ export class VaccineRegistrationService {
 
   async findAll(): Promise<IVaccineRegistrationResponse[]> {
     try {
-      const STATUS = 1;
       const res: IVaccineRegistrationResponse[] =
         await this.vaccineResgistrationRepositoy.find({
-          where: { status: STATUS },
+          where: { status: Status.SUCCESS },
           relations: ['user'],
         });
       if (res) {
@@ -37,9 +37,9 @@ export class VaccineRegistrationService {
         });
         return result;
       }
-      throw new HttpException('Not found data', 500);
+      throw new HttpException('Not found data', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -52,9 +52,9 @@ export class VaccineRegistrationService {
       if (data) {
         return data;
       }
-      throw new HttpException('Not found data', 500);
+      throw new HttpException('Not found data', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -66,11 +66,14 @@ export class VaccineRegistrationService {
       const oldRequest = await this.vaccineResgistrationRepositoy.findOne({
         where: {
           userId: userId,
-          status: 1,
+          status: Status.SUCCESS,
         },
       });
       if (oldRequest) {
-        throw new HttpException('Ban da dang ky tiem', 500);
+        throw new HttpException(
+          'Ban da dang ky tiem',
+          HttpStatus.NOT_ACCEPTABLE,
+        );
       }
       const code = `${new Date().getTime()}${userId}`;
       return await this.vaccineResgistrationRepositoy.save({
@@ -78,7 +81,7 @@ export class VaccineRegistrationService {
         ...createRegistration,
       });
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -94,7 +97,7 @@ export class VaccineRegistrationService {
       const update = await this.findOne(id);
       return update;
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -103,7 +106,7 @@ export class VaccineRegistrationService {
       await this.vaccineResgistrationRepositoy.delete({ id });
       return { message: 'Success' };
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -116,13 +119,13 @@ export class VaccineRegistrationService {
           queryDto.token,
         );
         if (payload) {
-          if (queryDto.status == 1) {
+          if (queryDto.status == Status.SUCCESS) {
             return await this.vaccineResgistrationRepositoy.findOne({
               where: { userId: payload.id, status: queryDto.status },
               relations: ['site', 'vaccine'],
             });
           }
-          if (queryDto.status == 2) {
+          if (queryDto.status == Status.COMPLETED) {
             return await this.vaccineResgistrationRepositoy.find({
               where: { userId: payload.id, status: queryDto.status },
               relations: ['site', 'vaccine'],
@@ -133,11 +136,11 @@ export class VaccineRegistrationService {
             relations: ['site', 'vaccine'],
           });
         } else {
-          throw new HttpException('Token not valid', 500);
+          throw new HttpException('Token not valid', HttpStatus.NOT_ACCEPTABLE);
         }
       }
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

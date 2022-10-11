@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Site } from 'src/typeorm/entities/site.entity';
 import { Repository } from 'typeorm';
@@ -15,11 +15,15 @@ export class SiteService {
 
   async findAll(): Promise<ISite[]> {
     try {
-      return await this.siteRepository.find({
+      const sites = await this.siteRepository.find({
         relations: ['ward', 'ward.district', 'ward.district.province'],
       });
+      if (sites) {
+        return sites;
+      }
+      throw new HttpException('Not exits Site', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException('Not exits Site', 404);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -29,9 +33,12 @@ export class SiteService {
         where: { id },
         relations: ['ward', 'ward.district', 'ward.district.province'],
       });
-      return site;
+      if (site) {
+        return site;
+      }
+      throw new HttpException('Not exits Site', HttpStatus.NOT_FOUND);
     } catch (error) {
-      throw new HttpException('Not exits Site', 404);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -40,7 +47,7 @@ export class SiteService {
       const newSite = await this.siteRepository.save(createSiteDto);
       return newSite;
     } catch (error) {
-      throw new HttpException(error, 404);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -50,7 +57,7 @@ export class SiteService {
       const siteUpdate = await this.findOne(id);
       return siteUpdate;
     } catch (error) {
-      throw new HttpException(error, 404);
+      throw new HttpException(error.message, 404);
     }
   }
 
@@ -59,7 +66,7 @@ export class SiteService {
       await this.siteRepository.delete({ id });
       return { message: 'Success' };
     } catch (error) {
-      throw new HttpException(error, 404);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

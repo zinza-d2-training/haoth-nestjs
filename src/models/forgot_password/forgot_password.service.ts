@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm/entities/user.entity';
@@ -32,7 +32,7 @@ export class ForgotPasswordService {
       );
       return res;
     } else {
-      throw new HttpException('Not exits email', 404);
+      throw new HttpException('Not exits email', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -58,11 +58,11 @@ export class ForgotPasswordService {
             );
           }
         } else {
-          throw new HttpException('Token not valid', 404);
+          throw new HttpException('Token not valid', HttpStatus.NOT_ACCEPTABLE);
         }
       }
     } catch (error) {
-      throw new HttpException('Token not valid', 404);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
