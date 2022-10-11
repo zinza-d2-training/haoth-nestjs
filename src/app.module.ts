@@ -11,6 +11,9 @@ import { AdministrativeUnitModule } from './models/administrative_units/administ
 import { AreaModule } from './models/areas/area.module';
 import { ForgotPasswordModule } from './models/forgot_password/forgot_password.module';
 import { SiteModule } from './models/sites/site.module';
+import { VaccineModule } from './models/vaccines/vaccine.module';
+import { GroupModule } from './models/groups/group.module';
+import { VaccineRegistrationModule } from './models/vaccine_registrations/vaccine_registration.module';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { SiteModule } from './models/sites/site.module';
     AreaModule,
     ForgotPasswordModule,
     SiteModule,
+    VaccineModule,
+    GroupModule,
+    VaccineRegistrationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

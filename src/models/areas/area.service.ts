@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { District } from 'src/typeorm/entities/district.entity';
 import { Province } from 'src/typeorm/entities/province.entity';
@@ -26,7 +26,7 @@ export class AreaService {
       const provinces = await this.provinceRepository.find();
       return provinces;
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -37,18 +37,18 @@ export class AreaService {
       });
       return districts as IDistrict[];
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async findWards(id: number): Promise<IWard[] | undefined> {
+  async findWards(id: number): Promise<IWard[]> {
     try {
       const wards = await this.wardRepository.find({
         where: { districtId: id },
       });
       return wards;
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

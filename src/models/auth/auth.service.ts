@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interfaces/user.interface';
 import { ILoginResponse } from './interfaces/login_response.interface';
+import { IPayloadToken } from './interfaces/payload_token.interface';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +38,7 @@ export class AuthService {
 
   async login(user: Partial<IUser>): Promise<ILoginResponse> {
     const payload = { email: user.email, id: user.id, type: user.type };
-    return { user: user, token: this.jwtService.sign(payload) };
+    return { token: this.jwtService.sign(payload) };
   }
 
   async register(user: CreateUserDto): Promise<Partial<IUser> | undefined> {
@@ -64,13 +65,19 @@ export class AuthService {
         return result;
       } else {
         if (!!exitsEmail) {
-          throw new HttpException('Email da duoc dang ky', 442);
+          throw new HttpException(
+            'Email da duoc dang ky',
+            HttpStatus.NOT_ACCEPTABLE,
+          );
         } else {
-          throw new HttpException('So CMND da duoc dang ky', 442);
+          throw new HttpException(
+            'So CMND da duoc dang ky',
+            HttpStatus.NOT_ACCEPTABLE,
+          );
         }
       }
     } catch (error) {
-      throw new HttpException(error, 500);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -79,5 +86,25 @@ export class AuthService {
       status: 200,
       msg: 'Logout success',
     };
+  }
+  // { user: IResponse; isAdmin: boolean }
+  async findUserLogin(
+    token: string,
+  ): Promise<{ user: Partial<IUser>; isAdmin: boolean }> {
+    try {
+      if (token) {
+        const payload: IPayloadToken = await this.jwtService.verify(token);
+        if (payload) {
+          const user = await this.usersService.findOne(payload.id);
+          if (user) {
+            return { user: user, isAdmin: payload.type === 1 };
+          }
+        }
+      } else {
+        throw new HttpException('Token in valid', HttpStatus.NOT_ACCEPTABLE);
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

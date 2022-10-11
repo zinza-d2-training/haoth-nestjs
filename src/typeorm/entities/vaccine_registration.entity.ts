@@ -44,13 +44,13 @@ export class VaccineRegistration {
   address: string;
 
   @Column({ name: 'shift', type: 'tinyint' })
-  shift: string;
-
-  @Column({ name: 'status', type: 'tinyint' })
-  name: string;
+  shift: number;
 
   @Column({ name: 'time', type: 'date' })
   time: Date;
+
+  @Column({ name: 'status', type: 'tinyint' })
+  status: number;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
   createdAt: Date;
@@ -60,17 +60,17 @@ export class VaccineRegistration {
 
   @ManyToOne(() => User, (user) => user.vaccineRegistrations)
   @JoinColumn({ name: 'user_id' })
-  user: [User];
+  user: User;
 
   @ManyToOne(() => Site, (site) => site.vaccineRegistrations)
   @JoinColumn({ name: 'site_id' })
-  site: [Site];
+  site: Site;
 
   @ManyToOne(() => Group, (group) => group.vaccineRegistrations)
   @JoinColumn({ name: 'group_id' })
-  group: [Group];
+  group: Group;
 
   @ManyToOne(() => Vaccine, (vaccine) => vaccine.vaccineRegistrations)
   @JoinColumn({ name: 'vaccine_id' })
-  vaccine: [Vaccine];
+  vaccine: Vaccine;
 }
