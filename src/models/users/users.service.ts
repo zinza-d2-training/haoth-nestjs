@@ -5,12 +5,14 @@ import { User } from 'src/typeorm/entities/user.entity';
 import { IUser, IUserResponse } from './interfaces/user.interface';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UsersService {
   private readonly users: IUserResponse[] = [];
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
 
   async update(
@@ -84,7 +86,9 @@ export class UsersService {
 
   async findAll(): Promise<Partial<IUser>[]> {
     try {
-      const listUsers = await this.userRepository.find();
+      const listUsers = await this.userRepository.find({
+        relations: ['ward', 'ward.district', 'ward.district.province'],
+      });
       if (listUsers) {
         const result = listUsers.map((user: User) => {
           const { password, type, tokenResetPassword, ...others } = user;
@@ -94,6 +98,22 @@ export class UsersService {
         return result;
       }
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async onlyMeUpdate(
+    id: number,
+    token: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Partial<IUser>> {
+    try {
+      const payload = await this.jwtService.verify(token);
+      if (payload && payload.id === id) {
+        return await this.update(id, updateUserDto);
+      }
+      throw new HttpException('Unauthorized', HttpStatus.NOT_ACCEPTABLE);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
