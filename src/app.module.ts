@@ -14,6 +14,7 @@ import { SiteModule } from './models/sites/site.module';
 import { VaccineModule } from './models/vaccines/vaccine.module';
 import { GroupModule } from './models/groups/group.module';
 import { VaccineRegistrationModule } from './models/vaccine_registrations/vaccine_registration.module';
+import { DocumentModule } from './models/documents/document.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { VaccineRegistrationModule } from './models/vaccine_registrations/vaccin
     VaccineModule,
     GroupModule,
     VaccineRegistrationModule,
+    DocumentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
