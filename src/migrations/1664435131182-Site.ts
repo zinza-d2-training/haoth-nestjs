@@ -33,6 +33,11 @@ export class Site1664435131182 implements MigrationInterface {
             length: '100',
           },
           {
+            name: 'name',
+            type: 'varchar',
+            length: '255',
+          },
+          {
             name: 'table',
             type: 'int',
             default: 0,

@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0.27
+    hostname: mysql
+    container_name: mysqldb
+    networks:
+      - covid19-app-network
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - todo-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+  app:
+    image: node:16-alpine
+    container_name: backend
+    networks:
+      - covid19-app-network
+    command: sh -c "npm install -f && npm run typeorm migration:run && npm run build && node cli import && npm run start"
+    ports:
+      - ${PORT}:${PORT}
+    working_dir: /app
+    volumes:
+      - ./:/app
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+volumes:
+  todo-mysql-data:
+
+networks:
+  covid19-app-network:
+    driver: bridge
